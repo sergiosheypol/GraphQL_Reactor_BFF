@@ -39,18 +39,18 @@ public abstract class ServiceTemplate<V> {
                 .getOrElse(() -> populateCacheAndFind(code));
     }
 
-    public ArrayList<V> getItemsFromProvider() {
+    private ArrayList<V> getItemsFromProvider() {
         return (ArrayList<V>) getDataFromProvider()
                 .doOnEach(signal -> ofNullable(signal.get()).ifPresent(this::pushItemToCache))
                 .collectList()
                 .block();
     }
 
-    public void pushItemToCache(V v) {
+    private void pushItemToCache(V v) {
         inMemoryCache.push(getCacheCode(v), v);
     }
 
-    public V populateCacheAndFind(String code) {
+    private V populateCacheAndFind(String code) {
         log.info("Value for key '" + code + "' is not cached");
         getAll();
         log.info("Cache is now populated");
