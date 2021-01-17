@@ -23,7 +23,10 @@ public abstract class ServiceTemplate<V> {
     private final InMemoryCache<String, V> inMemoryCache;
 
     public List<V> getAll() {
+        return this.doGetAll();
+    }
 
+    private ArrayList<V> doGetAll() {
         return Option.of(inMemoryCache.getCacheMap())
                 .filter(not(Map::isEmpty))
                 .map(Map::values)
@@ -32,10 +35,9 @@ public abstract class ServiceTemplate<V> {
     }
 
     public V getOne(final String code) {
-
         return Option.of(inMemoryCache.getCacheMap())
                 .filter(not(Map::isEmpty))
-                .map(__ -> inMemoryCache.get(code).orElse(getEmptyObject()))
+                .map(__ -> findSingleValue(code))
                 .getOrElse(() -> populateCacheAndFind(code));
     }
 
@@ -52,8 +54,12 @@ public abstract class ServiceTemplate<V> {
 
     private V populateCacheAndFind(String code) {
         log.info("Value for key '" + code + "' is not cached");
-        getAll();
+        this.doGetAll();
         log.info("Cache is now populated");
+        return findSingleValue(code);
+    }
+
+    private V findSingleValue(String code) {
         return inMemoryCache.get(code).orElse(getEmptyObject());
     }
 
