@@ -6,7 +6,7 @@ import com.shpl.bff.model.Coordinates;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AirportResolver implements GraphQLResolver<Airport> {
+public class CoordinatesResolver implements GraphQLResolver<Airport> {
 
     public Coordinates getCoordinates(Airport airport) {
         return Coordinates.builder()
